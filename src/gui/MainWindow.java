@@ -71,7 +71,7 @@ public class MainWindow extends JFrame {
     }
 
     public static void main(String args[]) {
-        MainWindow mainWindow = new MainWindow(new Refrigerator(new RefrigeratorConfig("wgateva")));
+        MainWindow mainWindow = new MainWindow(new Refrigerator(new RefrigeratorConfig("input.txt")));
         mainWindow.setVisible(true);
     }
 }

@@ -1,5 +1,9 @@
 package refrigerator;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 /**
  * Created by andrei on 5/3/16.
  */
@@ -20,19 +24,28 @@ public class RefrigeratorConfig {
     Integer timeToCoolFreezer;
 
     public RefrigeratorConfig(String pathToConfigFile) {
-        minFridgeTemp = -2;
-        maxFridgeTemp = 5;
-        minFreezerTemp = -9;
-        maxFreezerTemp = 0;
-        minRoomTemp = 20;
-        maxRoomTemp = 25;
-        timeToRiseDoorClosedFridge = 2;
-        timeToRiseDoorOpenFridge = 8;
-        timeToRiseDoorClosedFreezer = 1;
-        timeToRiseDoorOpenFreezer = 2;
-        tempDeltaToStartFridge = 2;
-        tempDeltaToStartFreezer = 1;
-        timeToCoolFridge = 3;
-        timeToCoolFreezer = 2;
+
+        try {
+            Scanner input = new Scanner(new File(pathToConfigFile));
+
+            minFridgeTemp = input.nextInt();
+            maxFridgeTemp = input.nextInt();
+            minFreezerTemp = input.nextInt();
+            maxFreezerTemp = input.nextInt();
+            minRoomTemp = input.nextInt();
+            maxRoomTemp = input.nextInt();
+            timeToRiseDoorClosedFridge = input.nextInt();
+            timeToRiseDoorOpenFridge = input.nextInt();
+            timeToRiseDoorClosedFreezer = input.nextInt();
+            timeToRiseDoorOpenFreezer = input.nextInt();
+            tempDeltaToStartFridge = input.nextInt();
+            tempDeltaToStartFreezer = input.nextInt();
+            timeToCoolFridge = input.nextInt();
+            timeToCoolFreezer = input.nextInt();
+            
+            input.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
