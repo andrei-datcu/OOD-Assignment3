@@ -7,13 +7,19 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by andrei on 5/3/16.
+ * Panel that show status for a refrigerator component (either fridge or freezer)
+ * It automatically gets updated whenever the state of the component gets updated
+ * Please notice that this implememts the Observer pattern
  */
 public class StatusPanel extends JPanel implements Observer {
 
     private JLabel currentTemp, unitStatus;
     private RefrigeratorComponent refrigeratorComponent;
 
+    /**
+     * @param refrigeratorComponent The components this shows the status for
+     * @param componentName The component name (fridge or freezer). Used for label captions
+     */
     public StatusPanel(RefrigeratorComponent refrigeratorComponent, String componentName) {
         super(new GridLayout(2, 2, 10, 10));
 

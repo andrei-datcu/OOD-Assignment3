@@ -10,7 +10,8 @@ import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 
 /**
- * Created by andrei on 5/3/16.
+ * Panel that keeps all the input controls toghether (2 x temperature for refrigerator components and 1 x temperature
+ * for room
  */
 public class TempInputPanel extends JPanel {
     private final static String[] labels = {"Desired freezer temp", "Desired fridge temp", "Room temp"};
@@ -19,6 +20,9 @@ public class TempInputPanel extends JPanel {
     private JFormattedTextField[] textInputs = new JFormattedTextField[3];
     private Refrigerator refrigerator;
 
+    /**
+     * @param refrigerator The refrigerator instance for which this panel sets the temperatures
+     */
     public TempInputPanel(final Refrigerator refrigerator) {
         super(new SpringLayout());
 
@@ -26,6 +30,8 @@ public class TempInputPanel extends JPanel {
         SpringLayout layout = (SpringLayout) getLayout();
 
         JLabel lastLabel = null;
+
+        // Lay a grid of controls. Each row has: Label -- Text Field -- Button to signal input
         for (int i = 0; i < 3; ++i) {
             JLabel l = new JLabel(labels[i], JLabel.TRAILING);
             this.add(l);
@@ -52,6 +58,7 @@ public class TempInputPanel extends JPanel {
             lastLabel = l;
         }
 
+        // Add click handlers for the two buttons that control fridge/freezer temperatures
         RefrigeratorComponent refrigeratorComponents[] = {refrigerator.getFreezer(), refrigerator.getFridge()};
         for (int i = 0; i < 2; ++i) {
             final JFormattedTextField textInput = textInputs[i];
@@ -66,6 +73,7 @@ public class TempInputPanel extends JPanel {
             });
         }
 
+        // Add click handler for the button that controls room temperature
         buttons[2].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {

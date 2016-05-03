@@ -1,8 +1,11 @@
 package patterns;
 
 /**
- * Created by andrei on 5/2/16.
+ * Interface implemented by Observer classes
  */
 public interface Observer {
+    /**
+     * Notify that something has changed in the observed object
+     */
     void notifyChange();
 }

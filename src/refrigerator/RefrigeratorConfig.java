@@ -5,7 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 /**
- * Created by andrei on 5/3/16.
+ * Configuration used to create a Refrigerator
+ * This is modeled closely to the assignment's requests
  */
 public class RefrigeratorConfig {
     Integer minFridgeTemp;
@@ -23,6 +24,9 @@ public class RefrigeratorConfig {
     Integer timeToCoolFridge;
     Integer timeToCoolFreezer;
 
+    /**
+     * @param pathToConfigFile path to a configuration file to construct from
+     */
     public RefrigeratorConfig(String pathToConfigFile) {
 
         try {
