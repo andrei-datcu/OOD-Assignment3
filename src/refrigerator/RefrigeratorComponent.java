@@ -1,31 +1,19 @@
 package refrigerator;
 
-import patterns.Observable;
-
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * Created by andrei on 5/2/16.
  */
-public class RefrigeratorComponent extends Observable {
-    // minimum interval in which the state changes in MILLISECONDS -- defaults to 1 minute
-    // change this for debug purposes
-    public static final long TICK_INTERVAL = 5000;
+public class RefrigeratorComponent extends Observable implements Observer {
+
     private Integer roomTemp;
     private Integer minTemp;
     private Integer maxTemp;
     private Integer desiredTemp;
     private Integer currentTemp;
     private Integer deltaStartTemp;
-    private Integer timeToRiseTempDoorOpen;
-    private Integer timeToRiseTempDoorClosed;
-    private Integer timeToLowerTemp;
-    private boolean isDoorClosed;
-    private boolean isCoolingUnitOn;
-    private Integer timeSinceLastTempChanged;
-
-    private Timer tickTimer;
+    RefrigeratorComponentState currentState;
 
     public RefrigeratorComponent(Integer roomTemp, Integer minTemp, Integer maxTemp,
                                  final Integer deltaStartTemp, final Integer timeToRiseTempDoorOpen,
@@ -35,61 +23,31 @@ public class RefrigeratorComponent extends Observable {
         this.maxTemp = maxTemp;
         this.desiredTemp = maxTemp;
         this.deltaStartTemp = deltaStartTemp;
-        this.timeToRiseTempDoorOpen = timeToRiseTempDoorOpen;
-        this.timeToRiseTempDoorClosed = timeToRiseTempDoorClosed;
-        this.timeToLowerTemp = timeToLowerTemp;
-
-        this.isDoorClosed = true;
-        this.isCoolingUnitOn = false;
         this.currentTemp = this.desiredTemp;
 
-        timeSinceLastTempChanged = 0;
+        CoolingState doorOpenCoolingState = new CoolingState(this, timeToLowerTemp, null, null, Events.DOOR_CLOSED);
+        IdleState doorClosedIdleState = new IdleState(this, timeToRiseTempDoorClosed, null, null, Events.DOOR_OPENED);
 
-        this.tickTimer = new Timer();
-        this.tickTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                synchronized (RefrigeratorComponent.this) {
-                    timeSinceLastTempChanged++;
-                    if (isCoolingUnitOn) {
+        CoolingState doorClosedCoolingState = new CoolingState(this, timeToLowerTemp, doorOpenCoolingState,
+                doorClosedIdleState, Events.DOOR_OPENED);
+        IdleState doorOpenIdleState = new IdleState(this, timeToRiseTempDoorOpen, doorClosedIdleState,
+                doorOpenCoolingState, Events.DOOR_CLOSED);
 
-                        // Do we still need the unit to run?
-                        if (currentTemp <= desiredTemp) {
-                            setCoolingUnit(false);
-                        }
+        doorOpenCoolingState.setOtherDoorState(doorClosedCoolingState);
+        doorOpenCoolingState.setOtherUnitState(doorOpenIdleState);
+        doorClosedIdleState.setOtherDoorState(doorOpenIdleState);
+        doorClosedIdleState.setOtherUnitState(doorClosedCoolingState);
 
-                        // We decrease the temperature
-                        if (timeSinceLastTempChanged >= timeToLowerTemp) {
-                            updateCurrentTemp(-1);
-                        }
-                    } else {
-                        Integer timeToRaise = isDoorClosed ? timeToRiseTempDoorClosed : timeToRiseTempDoorOpen;
-                        if (timeSinceLastTempChanged >= timeToRaise) {
-                            updateCurrentTemp(1);
-                        }
-
-                        if (currentTemp - desiredTemp >= deltaStartTemp) {
-                            setCoolingUnit(true);
-                        }
-                    }
-                }
-            }
-        }, TICK_INTERVAL, TICK_INTERVAL);
+        Clock.instance().addObserver(this);
+        changeCurrentState(doorClosedIdleState);
     }
 
-    private void updateCurrentTemp(Integer delta) {
+    void updateCurrentTemp(Integer delta) {
         if (currentTemp + delta > roomTemp) {
             return;
         }
         currentTemp += delta;
-        timeSinceLastTempChanged = 0;
-        notifyObservers();
-    }
-
-    private void setCoolingUnit(Boolean on) {
-        isCoolingUnitOn = on;
-        timeSinceLastTempChanged = 0;
-        notifyObservers();
+        notifyObservers(Signals.TEMP_CHANGED);
     }
 
     public boolean setDesiredTemp(Integer desiredTemp) {
@@ -97,31 +55,46 @@ public class RefrigeratorComponent extends Observable {
             return false;
         }
 
-        synchronized (this) {
-            this.desiredTemp = desiredTemp;
-            return true;
-        }
-    }
-
-    public void setDoor(Boolean closed) {
-        synchronized (this) {
-            this.isDoorClosed = closed;
-        }
+        this.desiredTemp = desiredTemp;
+        return true;
     }
 
     public Integer getCurrentTemp() {
         return currentTemp;
     }
 
-    public boolean isCoolingUnitRunning() {
-        return isCoolingUnitOn;
-    }
-
-    public boolean isDoorClosed() {
-        return isDoorClosed;
-    }
-
     void setRoomTemp(Integer temp) {
         this.roomTemp = temp;
+    }
+
+    void changeCurrentState(RefrigeratorComponentState nextState) {
+        currentState = nextState;
+        currentState.run();
+    }
+
+    Integer getDeltaStartTemp() {
+        return deltaStartTemp;
+    }
+
+    Integer getDesiredTemp() {
+        return desiredTemp;
+    }
+
+    /**
+     * For observer
+     * @param observable will be the clock
+     * @param arg the event that clock has ticked
+     */
+    @Override
+    public void update(Observable observable, Object arg) {
+        currentState.handle(arg);
+    }
+
+    /**
+     * handle one of the several other events such as door close
+     * @param arg the event from the GUI
+     */
+    public void processEvent(Object arg) {
+        currentState.handle(arg);
     }
 }

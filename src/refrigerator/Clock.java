@@ -14,10 +14,6 @@ public class Clock extends Observable {
     private Timer tickTimer = new Timer();
     private static Clock instance;
 
-    public enum Events {
-        CLOCK_TICKED_EVENT
-    };
-
     /**
      * Schedule regular ticks
      */
