@@ -1,7 +1,7 @@
 package refrigerator;
 
 /**
- * Created by vlad on 06/05/16.
+ * Cooling state for refrigerator component
  */
 class CoolingState extends RefrigeratorComponentState {
 

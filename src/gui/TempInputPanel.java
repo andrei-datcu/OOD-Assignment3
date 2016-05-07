@@ -10,10 +10,10 @@ import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 
 /**
- * Panel that keeps all the input controls toghether (2 x temperature for refrigerator components and 1 x temperature
+ * Panel that keeps all the input controls together (2 x temperature for refrigerator components and 1 x temperature
  * for room
  */
-public class TempInputPanel extends JPanel {
+class TempInputPanel extends JPanel {
     private final static String[] labels = {"Desired freezer temp", "Desired fridge temp", "Room temp"};
     private final static String[] buttonCaptions = {"Set freezer temp", "Set fridge temp", "Set room temp"};
     private JFormattedTextField[] textInputs = new JFormattedTextField[3];

@@ -15,7 +15,6 @@ public class RefrigeratorComponent extends Observable implements Observer {
     private Integer maxTemp;
     private Integer desiredTemp;
     private Integer currentTemp;
-    private Integer deltaStartTemp;
     private RefrigeratorComponentState currentState;
 
     /**
@@ -34,18 +33,18 @@ public class RefrigeratorComponent extends Observable implements Observer {
         this.minTemp = minTemp;
         this.maxTemp = maxTemp;
         this.desiredTemp = maxTemp;
-        this.deltaStartTemp = deltaStartTemp;
         this.currentTemp = this.desiredTemp;
 
         // Create the 4 states
 
         // Since the state graph is a cyclic we initially set some next states as null, and add them after their creation
         CoolingState doorOpenCoolingState = new CoolingState(this, timeToLowerTemp, null, null, Events.DOOR_CLOSED);
-        IdleState doorClosedIdleState = new IdleState(this, timeToRiseTempDoorClosed, null, null, Events.DOOR_OPENED);
+        IdleState doorClosedIdleState = new IdleState(this, timeToRiseTempDoorClosed, deltaStartTemp, null, null,
+                Events.DOOR_OPENED);
 
         CoolingState doorClosedCoolingState = new CoolingState(this, timeToLowerTemp, doorOpenCoolingState,
                 doorClosedIdleState, Events.DOOR_OPENED);
-        IdleState doorOpenIdleState = new IdleState(this, timeToRiseTempDoorOpen, doorClosedIdleState,
+        IdleState doorOpenIdleState = new IdleState(this, timeToRiseTempDoorOpen, deltaStartTemp, doorClosedIdleState,
                 doorOpenCoolingState, Events.DOOR_CLOSED);
 
         doorOpenCoolingState.setOtherDoorState(doorClosedCoolingState);
@@ -106,15 +105,19 @@ public class RefrigeratorComponent extends Observable implements Observer {
         this.roomTemp = temp;
     }
 
+    /**
+     * Update component's current state
+     * @param nextState
+     */
     void changeCurrentState(RefrigeratorComponentState nextState) {
         currentState = nextState;
         currentState.run();
     }
 
-    Integer getDeltaStartTemp() {
-        return deltaStartTemp;
-    }
-
+    /**
+     * Called only by the states
+     * @return the desired temp as set from TempInputPanel
+     */
     Integer getDesiredTemp() {
         return desiredTemp;
     }

@@ -11,20 +11,30 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by andrei on 5/3/16.
+ * Main GUI window
  */
 public class MainWindow extends JFrame {
 
     private Refrigerator refrigerator;
 
+    /**
+     * Create the GUI main window
+     * @param refrigerator managed by the window
+     */
     private MainWindow(Refrigerator refrigerator) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("OOP Assignment 3");
         this.setMinimumSize(new Dimension(500, 400));
+        this.setLocationRelativeTo(null);
         this.refrigerator = refrigerator;
         initLayout();
     }
 
+    /** Add a pair of open/close buttons
+     * @param container parent of the buttons
+     * @param componentName the component name whose door this buttons manage ("fridge" or "freezer")
+     * @param refrigeratorComponent the component name whose door this buttons manage
+     */
     private void addDoorButtons(JPanel container, String componentName, final RefrigeratorComponent refrigeratorComponent) {
         final JButton openDoorButton = new JButton("Open " + componentName + " door");
         final JButton closeDoorButton = new JButton("Close " + componentName + " door");
@@ -51,6 +61,9 @@ public class MainWindow extends JFrame {
         container.add(closeDoorButton);
     }
 
+    /**
+     * Create the window layout
+     */
     private void initLayout() {
         Container contentPane = getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
@@ -73,7 +86,12 @@ public class MainWindow extends JFrame {
     }
 
     public static void main(String args[]) {
-        MainWindow mainWindow = new MainWindow(new Refrigerator(new RefrigeratorConfig("input.txt")));
+        if (args.length != 1) {
+            System.out.println("Need only a config file path as argument");
+            return;
+        }
+
+        MainWindow mainWindow = new MainWindow(new Refrigerator(new RefrigeratorConfig(args[0])));
         mainWindow.setVisible(true);
     }
 }

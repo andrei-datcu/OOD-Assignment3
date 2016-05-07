@@ -9,9 +9,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- * Panel that show status for a refrigerator component (either fridge or freezer)
+ * Panel that shows status for a refrigerator component (either fridge or freezer)
  * It automatically gets updated whenever the state of the component gets updated
- * Please notice that this implememts the Observer pattern
+ * This implements the Observer pattern
  */
 class StatusPanel extends JPanel implements Observer {
 
