@@ -5,12 +5,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Created by vlad on 05/05/16.
+ * Simple tick clock. Tick interval is statically configurable
  */
 class Clock extends Observable {
     // minimum interval in which the state changes in MILLISECONDS -- defaults to 1 minute
-    // change this for debug purposes
-    private static final long TICK_INTERVAL = 5000;
+    // change this for debug / testing purposes
+    private static final long TICK_INTERVAL = 60000;
     private Timer tickTimer = new Timer();
     private static Clock instance;
 

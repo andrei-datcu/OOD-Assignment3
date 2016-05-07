@@ -1,7 +1,7 @@
 package refrigerator;
 
 /**
- * Created by andrei on 5/7/16.
+ * Signals sent by a RefrigeratorComponent to its Observer (StatusPanel)
  */
 public enum Signals {
     IDLE,

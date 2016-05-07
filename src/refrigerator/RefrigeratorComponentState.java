@@ -48,6 +48,9 @@ abstract class RefrigeratorComponentState {
         }
     }
 
+    /**
+     * Callback for every tick event
+     */
     private void handleTickEvent() {
         timeSinceLastTempChange++;
         //System.out.println(timeSinceLastTempChange.toString() + " " + timeToChangeTemp.toString());
@@ -56,11 +59,17 @@ abstract class RefrigeratorComponentState {
         }
     }
 
+    /**
+     * Called every time the temperature needs to be updated
+     */
     protected void updateTemperature() {
         timeSinceLastTempChange = 0;
         context.updateCurrentTemp(tempDelta);
     }
 
+    /**
+     * Called every time door's state has changed
+     */
     private void handleDoorEvent() {
         context.changeCurrentState(otherDoorState);
         if (doorHandledEvent.equals(Events.DOOR_CLOSED)) {
@@ -70,14 +79,25 @@ abstract class RefrigeratorComponentState {
         }
     }
 
+    /**
+     * Called every time the state is entered in
+     */
     void run() {
         timeSinceLastTempChange = 0;
     }
 
+    /**
+     * Set the state to enter in when the cooling unit flips its state (on or off)
+     * @param otherUnitState
+     */
     void setOtherUnitState(RefrigeratorComponentState otherUnitState) {
         this.otherUnitState = otherUnitState;
     }
 
+    /**
+     * Set the state to enter in when the door flips its state (on or off)
+     * @param otherDoorState
+     */
     void setOtherDoorState(RefrigeratorComponentState otherDoorState) {
         this.otherDoorState = otherDoorState;
     }

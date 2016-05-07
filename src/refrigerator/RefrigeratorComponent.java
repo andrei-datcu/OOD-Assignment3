@@ -3,7 +3,10 @@ package refrigerator;
 import java.util.*;
 
 /**
- * Created by andrei on 5/2/16.
+ * Refrigerator component that manages its states. This implements the state pattern, as requested
+ * This observs the Clock for tick events
+ * This is observed by StatusPanel
+ * Managed by Refrigerator
  */
 public class RefrigeratorComponent extends Observable implements Observer {
 
@@ -15,6 +18,15 @@ public class RefrigeratorComponent extends Observable implements Observer {
     private Integer deltaStartTemp;
     private RefrigeratorComponentState currentState;
 
+    /**
+     * @param roomTemp Room temperature
+     * @param minTemp minimum allowed temperature to be set as desired temp
+     * @param maxTemp maximum allowed temperature to be set as desired temp
+     * @param deltaStartTemp temperature diff between current temp and desired temp needed to start the cooling unit
+     * @param timeToRiseTempDoorOpen time needed for the temperature to rise by 1 degree. Measured in: Clock.TICK_INTERVAL
+     * @param timeToRiseTempDoorClosed time needed for the temperature to rise by 1 degree. Measured in Clock.TICK_INTERVAL
+     * @param timeToLowerTemp time needed for the temperature to lower by 1 degree. Measured in Clock.TICK_INTERVAL
+     */
     RefrigeratorComponent(Integer roomTemp, Integer minTemp, Integer maxTemp,
                                  final Integer deltaStartTemp, final Integer timeToRiseTempDoorOpen,
                                  final Integer timeToRiseTempDoorClosed, final Integer timeToLowerTemp) {
@@ -25,6 +37,9 @@ public class RefrigeratorComponent extends Observable implements Observer {
         this.deltaStartTemp = deltaStartTemp;
         this.currentTemp = this.desiredTemp;
 
+        // Create the 4 states
+
+        // Since the state graph is a cyclic we initially set some next states as null, and add them after their creation
         CoolingState doorOpenCoolingState = new CoolingState(this, timeToLowerTemp, null, null, Events.DOOR_CLOSED);
         IdleState doorClosedIdleState = new IdleState(this, timeToRiseTempDoorClosed, null, null, Events.DOOR_OPENED);
 
@@ -39,11 +54,17 @@ public class RefrigeratorComponent extends Observable implements Observer {
         doorClosedIdleState.setOtherUnitState(doorClosedCoolingState);
 
         Clock.instance().addObserver(this);
+
+        // Initially, the component is idle and its door is clocked
         changeCurrentState(doorClosedIdleState);
     }
 
+    /**
+     * Update this unit's current temperature. This is only called by the states
+     * @param delta the amount to change the current temperature with (can be negative as well)
+     */
     void updateCurrentTemp(Integer delta) {
-        if (currentTemp + delta > roomTemp) {
+        if (delta > 0 && currentTemp + delta > roomTemp) {
             return;
         }
         currentTemp += delta;
@@ -56,6 +77,11 @@ public class RefrigeratorComponent extends Observable implements Observer {
         super.notifyObservers(arg);
     }
 
+    /**
+     * Set the component's desired temp. This is called from StatusPanel
+     * @param desiredTemp wanted temperature
+     * @return true if the temperature can be set
+     */
     public boolean setDesiredTemp(Integer desiredTemp) {
         if (desiredTemp < this.minTemp || desiredTemp > this.maxTemp || desiredTemp > roomTemp) {
             return false;
@@ -65,10 +91,17 @@ public class RefrigeratorComponent extends Observable implements Observer {
         return true;
     }
 
+    /**
+     * @return current component's temperature
+     */
     public Integer getCurrentTemp() {
         return currentTemp;
     }
 
+    /**
+     * Set the room temperature. This is only called from Refrigerator and does not validate the temperature
+     * @param temp room temperature
+     */
     void setRoomTemp(Integer temp) {
         this.roomTemp = temp;
     }
