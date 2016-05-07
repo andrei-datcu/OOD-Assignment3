@@ -50,12 +50,14 @@ abstract class RefrigeratorComponentState {
 
     private void handleTickEvent() {
         timeSinceLastTempChange++;
+        //System.out.println(timeSinceLastTempChange.toString() + " " + timeToChangeTemp.toString());
         if (timeSinceLastTempChange.equals(timeToChangeTemp)) {
             updateTemperature();
         }
     }
 
     protected void updateTemperature() {
+        timeSinceLastTempChange = 0;
         context.updateCurrentTemp(tempDelta);
     }
 

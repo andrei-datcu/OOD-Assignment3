@@ -13,9 +13,9 @@ public class RefrigeratorComponent extends Observable implements Observer {
     private Integer desiredTemp;
     private Integer currentTemp;
     private Integer deltaStartTemp;
-    RefrigeratorComponentState currentState;
+    private RefrigeratorComponentState currentState;
 
-    public RefrigeratorComponent(Integer roomTemp, Integer minTemp, Integer maxTemp,
+    RefrigeratorComponent(Integer roomTemp, Integer minTemp, Integer maxTemp,
                                  final Integer deltaStartTemp, final Integer timeToRiseTempDoorOpen,
                                  final Integer timeToRiseTempDoorClosed, final Integer timeToLowerTemp) {
         this.roomTemp = roomTemp;
@@ -48,6 +48,12 @@ public class RefrigeratorComponent extends Observable implements Observer {
         }
         currentTemp += delta;
         notifyObservers(Signals.TEMP_CHANGED);
+    }
+
+    @Override
+    public void notifyObservers(Object arg) {
+        setChanged();
+        super.notifyObservers(arg);
     }
 
     public boolean setDesiredTemp(Integer desiredTemp) {

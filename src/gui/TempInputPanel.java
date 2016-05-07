@@ -16,22 +16,20 @@ import java.text.NumberFormat;
 public class TempInputPanel extends JPanel {
     private final static String[] labels = {"Desired freezer temp", "Desired fridge temp", "Room temp"};
     private final static String[] buttonCaptions = {"Set freezer temp", "Set fridge temp", "Set room temp"};
-    private JButton[] buttons = new JButton[3];
     private JFormattedTextField[] textInputs = new JFormattedTextField[3];
-    private Refrigerator refrigerator;
 
     /**
      * @param refrigerator The refrigerator instance for which this panel sets the temperatures
      */
-    public TempInputPanel(final Refrigerator refrigerator) {
+    TempInputPanel(final Refrigerator refrigerator) {
         super(new SpringLayout());
 
-        this.refrigerator = refrigerator;
         SpringLayout layout = (SpringLayout) getLayout();
 
         JLabel lastLabel = null;
 
         // Lay a grid of controls. Each row has: Label -- Text Field -- Button to signal input
+        JButton[] buttons = new JButton[3];
         for (int i = 0; i < 3; ++i) {
             JLabel l = new JLabel(labels[i], JLabel.TRAILING);
             this.add(l);

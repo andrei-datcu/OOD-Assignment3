@@ -7,10 +7,10 @@ import java.util.TimerTask;
 /**
  * Created by vlad on 05/05/16.
  */
-public class Clock extends Observable {
+class Clock extends Observable {
     // minimum interval in which the state changes in MILLISECONDS -- defaults to 1 minute
     // change this for debug purposes
-    public static final long TICK_INTERVAL = 1000;
+    private static final long TICK_INTERVAL = 5000;
     private Timer tickTimer = new Timer();
     private static Clock instance;
 
@@ -32,7 +32,7 @@ public class Clock extends Observable {
      *
      * @return returns the Clock
      */
-    public static Clock instance() {
+    static Clock instance() {
         if (instance == null) {
             instance = new Clock();
         }

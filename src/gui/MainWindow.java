@@ -1,5 +1,6 @@
 package gui;
 
+import refrigerator.Events;
 import refrigerator.Refrigerator;
 import refrigerator.RefrigeratorComponent;
 import refrigerator.RefrigeratorConfig;
@@ -16,10 +17,10 @@ public class MainWindow extends JFrame {
 
     private Refrigerator refrigerator;
 
-    public MainWindow(Refrigerator refrigerator) {
+    private MainWindow(Refrigerator refrigerator) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("OOP Assignment 3");
-        this.setMinimumSize(new Dimension(500, 350));
+        this.setMinimumSize(new Dimension(500, 400));
         this.refrigerator = refrigerator;
         initLayout();
     }
@@ -32,7 +33,7 @@ public class MainWindow extends JFrame {
         openDoorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                refrigeratorComponent.setDoor(false);
+                refrigeratorComponent.processEvent(Events.DOOR_OPENED);
                 openDoorButton.setEnabled(false);
                 closeDoorButton.setEnabled(true);
             }
@@ -41,7 +42,7 @@ public class MainWindow extends JFrame {
         closeDoorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                refrigeratorComponent.setDoor(true);
+                refrigeratorComponent.processEvent(Events.DOOR_CLOSED);
                 closeDoorButton.setEnabled(false);
                 openDoorButton.setEnabled(true);
             }
@@ -58,6 +59,7 @@ public class MainWindow extends JFrame {
         JPanel fridgeDoorPanel = new JPanel(new GridLayout(2, 2, 10, 10));
         addDoorButtons(fridgeDoorPanel, "fridge", refrigerator.getFridge());
         addDoorButtons(fridgeDoorPanel, "freezer", refrigerator.getFreezer());
+        contentPane.add(Box.createRigidArea(new Dimension(0, 20)));
         contentPane.add(fridgeDoorPanel);
         contentPane.add(Box.createRigidArea(new Dimension(0, 20)));
         contentPane.add(new JLabel("Status"));
