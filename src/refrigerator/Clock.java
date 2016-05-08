@@ -10,7 +10,7 @@ import java.util.TimerTask;
 class Clock extends Observable {
     // minimum interval in which the state changes in MILLISECONDS -- defaults to 1 minute
     // change this for debug / testing purposes
-    private static final long TICK_INTERVAL = 60000;
+    private static final long TICK_INTERVAL = 1000;
     private Timer tickTimer = new Timer();
     private static Clock instance;
 
